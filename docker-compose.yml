@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-
+  # elasticsearch
   elasticsearch:
     image: "elasticsearch:5.6"
     ports:
@@ -17,16 +17,18 @@ services:
     ports:
       - "2181:2181"
   kafka:
-    image: wurstmeister/zookeeper
+    image: wurstmeister/kafka
     ports:
-      - "9092"
+      - "9092:9092"
     environment:
       KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: "transactions:1:1,wallet_transactions:1:1"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-  # mongodb
+    depends_on:
+      - zookeeper
+  # mongodb replica set
   mongo3:
     image: mongo:3.2
     restart: always
